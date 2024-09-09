@@ -9,13 +9,13 @@ public interface ItemService {
 
     Item createItem(Long userId, Item item);
 
-    Item updateItem(User user, Item item);
+    Item updateItem(User user, Item item, Long itemId);
 
-    Item getItem(Long itemId);
+    Item getItem(Long userId, Long itemId);
 
     List<Item> getItemsByUser(User user);
 
-    List<Item> searchItems(String text);
+    List<Item> searchItems(Long userId, String text);
 
     void deleteItem(Long itemId);
 }

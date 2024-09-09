@@ -66,14 +66,6 @@ public class UserServiceImpl implements UserService {
         if (user.getName() != null) {
             updatedUser.setName(user.getName());
         }
-        /*if (user.getEmail() == null) {
-            throw new ValidationException("Email cannot be null()");
-        }
-
-        User updatedUser = users.stream().filter(user1 -> user1.getId().equals(userId))
-                .findFirst().orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
-        user.setEmail(user.getEmail());
-        user.setName(user.getName());*/
         return updatedUser;
     }
 

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.model.User;
 
 /**
  * TODO Sprint add-controllers.
@@ -15,7 +14,6 @@ import ru.practicum.shareit.user.model.User;
 @EqualsAndHashCode
 public class ItemDto {
 
-    private User owner;
     private Long id;
     @NotNull
     @NotBlank
