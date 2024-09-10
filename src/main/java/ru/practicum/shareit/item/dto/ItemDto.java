@@ -7,9 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.practicum.shareit.request.ItemRequest;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @EqualsAndHashCode
 public class ItemDto {

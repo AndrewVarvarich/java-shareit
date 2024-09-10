@@ -25,7 +25,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     protected ProblemDetail handleNotFoundException(NotFoundException exception) {
         log.warn(exception.getMessage());
-        log.debug(exception.getMessage(), exception);
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
