@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repo.BookingRepository;
 import ru.practicum.shareit.comment.dto.CommentDto;
@@ -34,7 +33,6 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
-    private final BookingMapper bookingMapper;
     private final CommentMapper commentMapper;
     private final CommentRepository commentRepository;
 
@@ -134,15 +132,26 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(commentMapper::toCommentDto)
                 .toList();
+        System.out.println("Number of comments: " + comments.size());
         itemDetailsDto.setComments(comments);
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println("Current Time: " + now);
+        // Проверяем, является ли пользователь владельцем вещи
+        if (item.getOwner().getId().equals(userId)) {
+            // Если да, то получаем последнее завершенное бронирование
+            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndEndBeforeOrderByEndDesc(itemId, now);
+            lastBooking.ifPresent(booking -> {
+                itemDetailsDto.setLastBooking(lastBooking.get());
+                System.out.println("Last Booking found: " + booking);
+            });
+        }
 
-        Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndEndBeforeOrderByEndDesc(itemId,
-                LocalDateTime.now());
-        lastBooking.ifPresent(booking -> itemDetailsDto.setLastBooking(bookingMapper.toBookingDto(booking)));
-
-        Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStartAfterOrderByStartAsc(itemId,
-                LocalDateTime.now());
-        nextBooking.ifPresent(booking -> itemDetailsDto.setNextBooking(bookingMapper.toBookingDto(booking)));
+        // Получаем следующее бронирование для всех пользователей
+        Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStartAfterOrderByStartAsc(itemId, now);
+        nextBooking.ifPresent(booking -> {
+            itemDetailsDto.setNextBooking(nextBooking.get());
+            System.out.println("Next Booking found: " + booking);
+        });
 
         return itemDetailsDto;
     }

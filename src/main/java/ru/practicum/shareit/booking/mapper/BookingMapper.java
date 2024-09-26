@@ -21,6 +21,8 @@ public interface BookingMapper {
 
     List<BookingDto> toBookingDtoList(List<Booking> bookingList);
 
+    List<BookingGivenDto> toBookingGivenDtoList(List<Booking> bookingList);
+
     BookingGivenDto toBookingGivenDto(Booking booking);
 
     @Named("mapItemIdToItem")

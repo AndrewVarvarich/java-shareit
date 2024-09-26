@@ -30,6 +30,7 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User booker;
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
     @ManyToOne

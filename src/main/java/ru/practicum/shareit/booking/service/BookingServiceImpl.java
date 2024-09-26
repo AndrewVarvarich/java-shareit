@@ -9,12 +9,16 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repo.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.exception.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.booking.service.BookingStatus.APPROVED;
 
 @RequiredArgsConstructor
 @Service
@@ -100,9 +104,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getBookingsByBooker(Long userId, BookingState state) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
         return switch (state) {
-            case CURRENT -> bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.APPROVED, sort);
+            case CURRENT -> bookingRepository.findByBookerIdAndStatus(userId, APPROVED, sort);
             case PAST -> bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED, sort);
             case FUTURE -> bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.WAITING, sort);
             default -> bookingRepository.findByBookerId(userId, sort);
@@ -114,6 +118,8 @@ public class BookingServiceImpl implements BookingService {
         if (ownerId == null) {
             throw new ValidationException("Owner ID cannot be null");
         }
+
+        User owner = userService.getUser(ownerId);
 
 
         // Получаем все бронирования владельца
@@ -146,17 +152,19 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getBookingsByUser(Long userId, Long bookingId, BookingState state) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Booking not found"));
+        return null;
+    }
 
-        if (booking.getOwner().getId().equals(userId)) {
-            // Если пользователь владелец вещи
-            return getBookingsByOwner(userId, state);
-        } else if (booking.getBooker().getId().equals(userId)) {
-            // Если пользователь арендатор (booker)
-            return getBookingsByBooker(userId, state);
-        } else {
-            throw new ValidationException("User is neither owner nor booker of this booking");
-        }
+    @Override
+    public List<Booking> getAllBookingsByUser(Long userId, BookingState state) {
+
+        return switch (state) {
+            case WAITING -> bookingRepository.findAllByBookerIdAndStatus(userId, BookingStatus.WAITING);
+            case REJECTED -> bookingRepository.findAllByBookerIdAndStatus(userId, BookingStatus.REJECTED);
+            case PAST -> bookingRepository.findAllByBookerIdAndEndBefore(userId, LocalDateTime.now());
+            case FUTURE -> bookingRepository.findAllByBookerIdAndStartAfter(userId, LocalDateTime.now());
+            default -> bookingRepository.findAllByBookerId(userId);
+        };
     }
 
     @Override
@@ -172,7 +180,23 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalStateException("Booking has already been approved or rejected");
         }
 
-        booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
+        booking.setStatus(approved ? APPROVED : BookingStatus.REJECTED);
         return bookingRepository.save(booking);
+    }
+
+    @Override
+    public Optional<Booking> getBookingsByBookingId(Long bookingId, BookingState state) {
+        //Sort sort = Sort.by(Sort.Direction.DESC, "start");  (TO DO сортировка по дате на 16 спринт)
+
+        // Находим бронирование по id
+        Optional<Booking> booking = bookingRepository.findById(bookingId);
+
+        // Проверка статуса и возврат соответствующего результата
+        return switch (state) {
+            case CURRENT -> booking.filter(b -> b.getStatus() == APPROVED);
+            case PAST -> booking.filter(b -> b.getStatus() == BookingStatus.REJECTED);
+            case FUTURE -> booking.filter(b -> b.getStatus() == BookingStatus.WAITING);
+            default -> booking; // Возвращаем бронирование без фильтрации
+        };
     }
 }

@@ -4,6 +4,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingService {
 
@@ -22,5 +23,10 @@ public interface BookingService {
 
     List<Booking> getBookingsByUser(Long userId, Long bookingId, BookingState state);
 
+    List<Booking> getAllBookingsByUser(Long userId, BookingState state);
+
     Booking approveBooking(Long bookingId, Long ownerId, Boolean approved);
+
+    Optional<Booking> getBookingsByBookingId(Long bookingId, BookingState state);
+
 }

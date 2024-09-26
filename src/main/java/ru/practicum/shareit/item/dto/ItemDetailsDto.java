@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 
@@ -27,7 +27,7 @@ public class ItemDetailsDto {
     private String description;
     private Boolean available;
     private ItemRequest request;
-    private BookingDto lastBooking;
-    private BookingDto nextBooking;
+    private Booking lastBooking;
+    private Booking nextBooking;
     private List<CommentDto> comments = new ArrayList<>();
 }

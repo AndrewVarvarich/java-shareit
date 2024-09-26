@@ -13,21 +13,17 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findByBooker_IdAndEndIsBefore(Long bookerId, LocalDateTime end, Sort sort);
-
     List<Booking> findByBookerIdAndStatus(Long bookerId, BookingStatus status, Sort sort);
-
-    List<Booking> findByOwnerIdAndStatus(Long ownerId, BookingStatus status, Sort sort);
 
     List<Booking> findByBookerId(Long bookerId, Sort sort);
 
     List<Booking> findByOwnerId(Long ownerId, Sort sort);
 
     // Метод для получения последнего бронирования
-    Optional<Booking> findFirstByItemIdAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime currentTime);
+    Optional<Booking> findFirstByItemIdAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime end);
 
     // Метод для получения ближайшего будущего бронирования
-    Optional<Booking> findFirstByItemIdAndStartAfterOrderByStartAsc(Long itemId, LocalDateTime currentTime);
+    Optional<Booking> findFirstByItemIdAndStartAfterOrderByStartAsc(Long itemId, LocalDateTime now);
 
     boolean existsByItemIdAndBookerIdAndEndBefore(Long itemId, Long userId, LocalDateTime time);
 
@@ -44,4 +40,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("itemId") Long itemId,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
+
+    @Query("SELECT b FROM Booking b WHERE b.id = :bookingId")
+    List<Booking> findByBookingId(@Param("bookingId") Long bookingId, Sort sort);
+
+    @Query("SELECT b FROM Booking b WHERE b.id = :bookingId AND b.status = :status")
+    List<Booking> findByIdAndStatus(@Param("bookingId") Long bookingId, @Param("status") BookingStatus status,
+                                    Sort sort);
+
+    List<Booking> findAllByBookerId(Long bookerId);
+    List<Booking> findAllByBookerIdAndStatus(Long bookerId, BookingStatus status);
+    List<Booking> findAllByBookerIdAndEndBefore(Long bookerId, LocalDateTime end);
+    List<Booking> findAllByBookerIdAndStartAfter(Long bookerId, LocalDateTime start);
+
+    boolean existsByItemIdAndBookerIdAndStatusAndEndBefore(Long itemId, Long userId, BookingStatus status,
+                                                           LocalDateTime time);
 }
