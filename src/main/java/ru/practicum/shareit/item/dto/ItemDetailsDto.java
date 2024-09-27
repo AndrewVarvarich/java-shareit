@@ -19,7 +19,6 @@ import java.util.List;
 public class ItemDetailsDto {
 
     private Long id;
-    @NotNull
     @NotBlank
     private String name;
     @NotNull

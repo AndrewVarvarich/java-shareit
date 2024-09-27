@@ -28,6 +28,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemService itemService;
     private final UserService userService;
     private final BookingMapper mapper;
+
     @Override
     public Booking createBooking(Long bookerId, BookingDto bookingDto) {
         if (bookerId == null || bookingDto == null) {
@@ -99,6 +100,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getStatus() != null) {
             existingBooking.setStatus(booking.getStatus());
         }
+
         return bookingRepository.save(existingBooking);
     }
 
@@ -121,13 +123,10 @@ public class BookingServiceImpl implements BookingService {
 
         User owner = userService.getUser(ownerId);
 
-
-        // Получаем все бронирования владельца
         List<Booking> bookings = bookingRepository.findByOwnerId(ownerId, Sort.by(Sort.Direction.ASC, "start"));
 
-        // Фильтруем по состоянию
         return switch (state) {
-            case ALL -> bookings; // возвращаем все бронирования
+            case ALL -> bookings;
             case CURRENT -> {
                 LocalDateTime now = LocalDateTime.now();
                 yield bookings.stream()
@@ -157,7 +156,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBookingsByUser(Long userId, BookingState state) {
-
         return switch (state) {
             case WAITING -> bookingRepository.findAllByBookerIdAndStatus(userId, BookingStatus.WAITING);
             case REJECTED -> bookingRepository.findAllByBookerIdAndStatus(userId, BookingStatus.REJECTED);
@@ -181,6 +179,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         booking.setStatus(approved ? APPROVED : BookingStatus.REJECTED);
+
         return bookingRepository.save(booking);
     }
 
@@ -188,15 +187,13 @@ public class BookingServiceImpl implements BookingService {
     public Optional<Booking> getBookingsByBookingId(Long bookingId, BookingState state) {
         //Sort sort = Sort.by(Sort.Direction.DESC, "start");  (TO DO сортировка по дате на 16 спринт)
 
-        // Находим бронирование по id
         Optional<Booking> booking = bookingRepository.findById(bookingId);
 
-        // Проверка статуса и возврат соответствующего результата
         return switch (state) {
             case CURRENT -> booking.filter(b -> b.getStatus() == APPROVED);
             case PAST -> booking.filter(b -> b.getStatus() == BookingStatus.REJECTED);
             case FUTURE -> booking.filter(b -> b.getStatus() == BookingStatus.WAITING);
-            default -> booking; // Возвращаем бронирование без фильтрации
+            default -> booking;
         };
     }
 }

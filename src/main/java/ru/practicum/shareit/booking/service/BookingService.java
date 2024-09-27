@@ -16,7 +16,6 @@ public interface BookingService {
 
     Booking updateBooking(Booking booking, Long bookingId);
 
-
     List<Booking> getBookingsByBooker(Long userId, BookingState state);
 
     List<Booking> getBookingsByOwner(Long ownerId, BookingState state);
@@ -28,5 +27,4 @@ public interface BookingService {
     Booking approveBooking(Long bookingId, Long ownerId, Boolean approved);
 
     Optional<Booking> getBookingsByBookingId(Long bookingId, BookingState state);
-
 }

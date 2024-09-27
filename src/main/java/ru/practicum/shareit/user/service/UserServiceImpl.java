@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repo.UserRepository;
 import ru.practicum.shareit.exception.*;
 
-
 import java.util.List;
 
 @Service

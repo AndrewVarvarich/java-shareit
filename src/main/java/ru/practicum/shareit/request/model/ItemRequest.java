@@ -6,9 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import ru.practicum.shareit.user.model.User;
 
-/**
- * TODO Sprint add-item-requests.
- */
 
 @Data
 @Entity

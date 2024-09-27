@@ -36,7 +36,6 @@ public class ItemServiceImpl implements ItemService {
     private final CommentMapper commentMapper;
     private final CommentRepository commentRepository;
 
-
     @Override
     public Item createItem(Long userId, Item item) {
         if (userId == null || item == null) {
@@ -50,12 +49,11 @@ public class ItemServiceImpl implements ItemService {
         if (userService.getUser(userId) == null) {
             throw new NotFoundException("User not found");
         }
+
         item.setOwner(userService.getUser(userId));
-        if (item.getName() == null) {
-            throw new ValidationException("Item name cannot be null");
-        }
         log.info("Creating item with values: isAvailable={}, description={}, name={}, ownerId={}, requestId={}",
                 item.getAvailable(), item.getDescription(), item.getName(), item.getOwner().getId(), item.getRequest());
+
         return itemRepository.save(item);
     }
 
@@ -132,25 +130,24 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(commentMapper::toCommentDto)
                 .toList();
-        System.out.println("Number of comments: " + comments.size());
+        log.info("Number of comments: " + comments.size());
+
         itemDetailsDto.setComments(comments);
         LocalDateTime now = LocalDateTime.now();
-        System.out.println("Current Time: " + now);
-        // Проверяем, является ли пользователь владельцем вещи
+        log.info("Current Time: " + now);
+
         if (item.getOwner().getId().equals(userId)) {
-            // Если да, то получаем последнее завершенное бронирование
             Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndEndBeforeOrderByEndDesc(itemId, now);
             lastBooking.ifPresent(booking -> {
                 itemDetailsDto.setLastBooking(lastBooking.get());
-                System.out.println("Last Booking found: " + booking);
+                log.info("Last Booking found: " + booking);
             });
         }
 
-        // Получаем следующее бронирование для всех пользователей
         Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStartAfterOrderByStartAsc(itemId, now);
         nextBooking.ifPresent(booking -> {
             itemDetailsDto.setNextBooking(nextBooking.get());
-            System.out.println("Next Booking found: " + booking);
+            log.info("Next Booking found: " + booking);
         });
 
         return itemDetailsDto;
@@ -164,9 +161,9 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        // Проверяем, что пользователь арендовал эту вещь и аренда завершена
         boolean isValidBooking = bookingRepository.existsByItemIdAndBookerIdAndEndBefore(itemId, userId,
                 LocalDateTime.now());
+
         if (!isValidBooking) {
             throw new ValidationException("User has not rented this item or rental period has not ended");
         }
@@ -191,8 +188,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public boolean isItemAvailable(Long itemId, LocalDateTime start, LocalDateTime end) {
-        // Проверка, нет ли пересекающихся бронирований для данного предмета в указанный интервал времени
         List<Booking> overlappingBookings = bookingRepository.findOverlappingBookings(itemId, start, end);
-        return overlappingBookings.isEmpty(); // Если пересечений нет, то вещь доступна
+        return overlappingBookings.isEmpty();
     }
 }

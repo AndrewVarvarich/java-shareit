@@ -9,17 +9,12 @@ import java.time.LocalDateTime;
 
 @Data
 public class BookingGivenDto {
+
     private Long id;
-
     private LocalDateTime start;
-
     private LocalDateTime end;
-
     private Item item;
-
     private UserDto booker;
-
     private UserDto owner;
-
     private BookingStatus status;
 }

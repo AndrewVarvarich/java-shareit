@@ -14,7 +14,6 @@ import ru.practicum.shareit.request.model.ItemRequest;
 public class ItemDto {
 
     private Long id;
-    @NotNull
     @NotBlank
     private String name;
     @NotNull
