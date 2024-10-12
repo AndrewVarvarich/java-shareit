@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -16,47 +17,16 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 
-@Controller
+@RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
 @Slf4j
-@Validated
 public class BookingController {
     private final BookingClient bookingClient;
 
-    @GetMapping("/{bookingId}")
-    public ResponseEntity<Object> getBooking(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
-                                             @Positive @PathVariable Long bookingId) {
-        log.info("Responded to GET /bookings/{}", bookingId);
-        return bookingClient.getBooking(userId, bookingId);
-    }
-
-    @GetMapping("/owner")
-    public ResponseEntity<Object> getBookingsOfOwner(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
-                                                     @RequestParam(name = "state", defaultValue = "all")
-                                                     String stateParam) {
-        BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        log.info("Responded to GET /bookings/owner?state={}", stateParam);
-        return bookingClient.getOwnerBookings(userId, state);
-    }
-
-    @GetMapping
-    public ResponseEntity<Object> getBookings(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
-                                              @RequestParam(name = "state", defaultValue = "all") String stateParam,
-                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
-                                              Integer from,
-                                              @Positive @RequestParam(name = "size", defaultValue = "10")
-                                              Integer size) {
-        BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        log.info("Responded to GET /bookings?state={}&from={}&size={}&userId={}", stateParam, userId, from, size);
-        return bookingClient.getBookings(userId, state, from, size);
-    }
-
     @PostMapping
     public ResponseEntity<Object> bookItem(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
-                                           @Validated @RequestBody BookItemRequestDto requestDto) {
+                                           @Valid @RequestBody BookItemRequestDto requestDto) {
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         if (requestDto.getStart().isBefore(now) || (!requestDto.getEnd().isAfter(requestDto.getStart()))) {
             throw new ValidationException("Start time booking must be before end time and both times don't be " +
@@ -65,6 +35,28 @@ public class BookingController {
         log.info("Request time {}", now);
         log.info("Start time {}, end time {}", requestDto.getStart(), requestDto.getEnd());
         return bookingClient.bookItem(userId, requestDto);
+    }
+
+    @GetMapping("/{bookingId}")
+    public ResponseEntity<Object> getBooking(@Positive @RequestHeader("X-Sharer-User-Id") final long userId,
+                                             @Positive @PathVariable long bookingId) {
+        log.info("Responded to GET /bookings/{}", bookingId);
+        return bookingClient.getBooking(userId, bookingId);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> getBookings(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
+                                              @RequestParam(name = "state", defaultValue = "all") String state) {
+        log.info("Responded to GET /bookings?state={}&userId={}", state, userId);
+        return bookingClient.getBookings(userId, state);
+    }
+
+    @GetMapping("/owner")
+    public ResponseEntity<Object> getBookingsOfOwner(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
+                                                     @RequestParam(name = "state", defaultValue = "all")
+                                                     String state) {
+        log.info("Responded to GET /bookings/owner?state={}", state);
+        return bookingClient.getOwnerBookings(userId, state);
     }
 
     @PatchMapping("/{bookingId}")

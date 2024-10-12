@@ -29,11 +29,15 @@ public class ItemRequestClient extends BaseClient {
         return post("", userId, itemRequestDto);
     }
 
-    public ResponseEntity<Object> getAllRequests(long userId) {
+    public ResponseEntity<Object> getAllRequestsOfOwner(long userId) {
         return get("", userId);
     }
 
     public ResponseEntity<Object> getRequestById(long requestId, long userId) {
-        return get("requestId" + requestId, userId);
+        return get("/" + requestId, userId);
+    }
+
+    public ResponseEntity<Object> getAllRequestsOfOtherUsers(long userId) {
+        return get("/all", userId);
     }
 }

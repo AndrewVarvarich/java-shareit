@@ -1,17 +1,29 @@
 package ru.practicum.shareit.request.mapper;
 
 import org.mapstruct.Mapper;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.model.ItemRequest;
+import org.mapstruct.Mapping;
+import ru.practicum.shareit.request.dto.*;
+import ru.practicum.shareit.request.model.*;
+import ru.practicum.shareit.item.model.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface ItemRequestMapper {
 
-    ItemRequestDto toItemRequestDto(ItemRequest request);
+    @Mapping(target = "requester.id", source = "userId")
+    @Mapping(target = "created", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "items", expression = "java(new java.util.HashSet<>())")
+    ItemRequest mapToItemRequest(Long userId, ItemRequestCreateDto dot);
 
-    ItemRequest toItemRequest(ItemRequestDto itemRequestDto);
+    @Mapping(target = "items", source = "items")
+    ItemRequestRetrieveDto mapToDto(ItemRequest itemRequest);
 
-    List<ItemRequestDto> toItemRequestDtoList(List<ItemRequest> requestList);
+    List<ItemRequestRetrieveDto> mapToDto(List<ItemRequest> itemRequests);
+
+    @Mapping(target = "ownerId", source = "owner.id")
+    @Mapping(target = "id", source = "item.id")
+    @Mapping(target = "name", source = "item.name")
+    @Mapping(target = "description", source = "item.description")
+    ItemRequestItemRetrieveDto mapToDto(Item item);
 }

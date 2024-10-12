@@ -8,9 +8,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
-import ru.practicum.shareit.user.dto.UserDto;
-
-import java.sql.SQLOutput;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 @Service
 @Slf4j
@@ -18,7 +17,7 @@ public class UserClient extends BaseClient {
 
     private static final String API_PREFIX = "/users";
 
-    public UserClient(@Value("${shareit-server.url}$") String serverUrl, RestTemplateBuilder builder) {
+    public UserClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
@@ -35,12 +34,12 @@ public class UserClient extends BaseClient {
         return get("/" + userId);
     }
 
-    public ResponseEntity<Object> createUser(UserDto userDto) {
+    public ResponseEntity<Object> createUser(UserCreateDto userDto) {
         return post("", userDto);
     }
 
 
-    public ResponseEntity<Object> updateUser(long userId, UserDto userDto) {
+    public ResponseEntity<Object> updateUser(long userId, UserUpdateDto userDto) {
         return patch("/" + userId, userDto);
     }
 

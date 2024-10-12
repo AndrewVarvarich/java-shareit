@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,11 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 public class CommentDto {
 
-    private Long id;
     @NotBlank
+    @Size(max = 2000)
     private String text;
-    @NotBlank
-    private String authorName;
-    @FutureOrPresent
-    private LocalDateTime created;
 }

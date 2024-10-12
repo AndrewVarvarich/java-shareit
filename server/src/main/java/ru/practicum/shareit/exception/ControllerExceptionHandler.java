@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -62,5 +63,15 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     protected ProblemDetail handleThrowable(Throwable throwable) {
         log.error(throwable.getMessage(), throwable);
         return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Please contact site admin");
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleUnsupportedBookingStateFilterException(
+            final UnsupportedBookingStateFilterException exception) {
+        final ProblemDetail response = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                "Check that data you sent is correct");
+        response.setProperty("error", "Unknown state: %s".formatted(exception.getInvalidValue()));
+        log.warn("Unknown state to filter bookings: {}", exception.getInvalidValue());
+        return response;
     }
 }

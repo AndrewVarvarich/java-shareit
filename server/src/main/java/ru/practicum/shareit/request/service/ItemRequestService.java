@@ -1,18 +1,22 @@
 package ru.practicum.shareit.request.service;
 
-import ru.practicum.shareit.request.dto.NewItemRequestDto;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.request.dto.ItemRequestRetrieveDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.List;
 
 public interface ItemRequestService {
 
-    ItemRequest createRequest(Long userId, NewItemRequestDto requestDto);
+    ItemRequest createItemRequest(ItemRequest request);
 
-    void deleteRequest(Long userId, Long requestId);
+    List<ItemRequest> getOthersRequests(long userId);
 
-    List<ItemRequest> getRequestsByUserId(Long userId);
+    List<ItemRequest> getOwnRequests(long userId);
 
-    ItemRequest getRequestById(Long requestId);
+    ItemRequest getItemRequest(long id);
+
+    ItemRequest getRequestById(long requestId, long userId);
+    ItemRequest getItemRequestWithRelations(long id, long userId);
 
 }

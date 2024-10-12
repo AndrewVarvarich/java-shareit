@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.service.BookingStatus;
+import ru.practicum.shareit.booking.mapper.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,27 +15,46 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBookerIdAndStatus(Long bookerId, BookingStatus status, Sort sort);
 
-    List<Booking> findByBookerIdAndStartBeforeAndEndAfter(Long userId, LocalDateTime start, LocalDateTime end ,
-                                                          Sort sort);
+    @Query("select b from Booking b join fetch b.booker join fetch b.item where b.booker.id = :userId "
+            + "and b.start <= current_timestamp and b.end > current_timestamp")
+    List<Booking> findCurrentByBookerId(@Param("userId") long userId, Sort sort);
 
-    List<Booking> findByBookerIdAndEndAfter(Long userId, LocalDateTime end, Sort sort);
+    @Query("select b from Booking b join fetch b.booker join fetch b.item where b.booker.id = :userId "
+            + "and b.end <= current_timestamp")
+    List<Booking> findPastByBookerId(@Param("userId") long userId, Sort sort);
+
+    @Query("select b from Booking b join fetch b.booker join fetch b.item where b.booker.id = :userId "
+            + "and b.start > current_timestamp")
+    List<Booking> findFutureByBookerId(@Param("userId") long userId, Sort sort);
+
+    @Query("select b from Booking b join fetch b.booker join fetch b.item join b.item.owner "
+            + "where b.item.owner.id = :userId and b.start <= current_timestamp and b.end > current_timestamp")
+    List<Booking> findCurrentByItemOwnerId(@Param("userId") long userId, Sort sort);
 
     List<Booking> findByBookerIdAndStartAfter(Long userId, LocalDateTime start, Sort sort);
 
-    List<Booking> findByOwnerIdAndStartBeforeAndEndAfter(Long ownerId, LocalDateTime start, LocalDateTime end,
-                                                         Sort sort);
+    @Query("select b from Booking b join fetch b.booker join fetch b.item join b.item.owner "
+            + "where b.item.owner.id = :userId and b.start > current_timestamp")
+    List<Booking> findFutureByItemOwnerId(@Param("userId") long userId, Sort sort);
 
-    List<Booking> findByOwnerIdAndEndAfter(Long ownerId, LocalDateTime end, Sort sort);
+    @Query("select b from Booking b join fetch b.booker join fetch b.item join b.item.owner "
+            + "where b.item.owner.id = :userId and b.status = :status")
+    List<Booking> findAllByItemOwnerIdAndStatus(@Param("userId") long userId, @Param("status") BookingStatus status,
+                                                Sort sort);
 
-    List<Booking> findByOwnerIdAndStartAfter(Long ownerId, LocalDateTime start, Sort sort);
+    @Query("select b from Booking b join fetch b.booker join fetch b.item i left join fetch i.comments"
+            + " where b.booker.id = :userId and b.item.id = :itemId and b.status = 'APPROVED'"
+            + " and b.end <= current_timestamp")
+    List<Booking> findAllCompleteBookingByBookerIdAndItemId(@Param("userId") long userId, @Param("itemId") long itemId);
 
-    List<Booking> findByOwnerIdAndStatus(Long ownerId, BookingStatus status , Sort sort);
-
-    List<Booking> findByOwnerIdAndEndBefore(Long ownerId, LocalDateTime end, Sort sort);
-
+    @Query("select b from Booking b join fetch b.booker join fetch b.item join b.item.owner "
+            + "where b.item.owner.id = :userId and b.end <= current_timestamp")
+    List<Booking> findPastByItemOwnerId(@Param("userId") long userId, Sort sort);
     List<Booking> findByBookerId(Long bookerId, Sort sort);
 
-    List<Booking> findByOwnerId(Long ownerId, Sort sort);
+    @Query("select b from Booking b join fetch b.booker join fetch b.item join b.item.owner "
+            + "where b.item.owner.id = :userId")
+    List<Booking> findAllByItemOwnerId(@Param("userId") long userId, Sort sort);
 
     Optional<Booking> findFirstByItemIdAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime end);
 

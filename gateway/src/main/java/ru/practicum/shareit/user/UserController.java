@@ -4,12 +4,12 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import java.util.Collection;
 
@@ -22,10 +22,10 @@ public class UserController {
 
     private final UserClient userClient;
 
-    @GetMapping
-    public ResponseEntity<Object> getAllUsers() {
-        log.info("Received GET at /users");
-        return userClient.getAllUsers();
+    @PostMapping
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDto newUserDto) {
+        log.info("Received POST at /users");
+        return userClient.createUser(newUserDto);
     }
 
     @GetMapping("/{userId}")
@@ -34,14 +34,15 @@ public class UserController {
         return userClient.getUser(userId);
     }
 
-    @PostMapping
-    public ResponseEntity<Object> createUser(@Validated @RequestBody UserDto newUserDto) {
-        log.info("Received POST at /users");
-        return userClient.createUser(newUserDto);
+    @GetMapping
+    public ResponseEntity<Object> getAllUsers() {
+        log.info("Received GET at /users");
+        return userClient.getAllUsers();
     }
 
     @PatchMapping(value = "/{userId}")
-    public ResponseEntity<Object> updateUser(@Positive@PathVariable Long userId,@RequestBody UserDto updatedUserDto) {
+    public ResponseEntity<Object> updateUser(@Positive @PathVariable Long userId,
+                                             @RequestBody UserUpdateDto updatedUserDto) {
         log.info("Received PATCH at /users/{}: {}", userId, updatedUserDto);
         return userClient.updateUser(userId, updatedUserDto);
     }
