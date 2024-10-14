@@ -15,6 +15,7 @@ public interface ItemRequestService {
     ItemRequest getItemRequest(long id);
 
     ItemRequest getRequestById(long requestId, long userId);
+
     ItemRequest getItemRequestWithRelations(long id, long userId);
 
 }

@@ -50,6 +50,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b join fetch b.booker join fetch b.item join b.item.owner "
             + "where b.item.owner.id = :userId and b.end <= current_timestamp")
     List<Booking> findPastByItemOwnerId(@Param("userId") long userId, Sort sort);
+
     List<Booking> findByBookerId(Long bookerId, Sort sort);
 
     @Query("select b from Booking b join fetch b.booker join fetch b.item join b.item.owner "

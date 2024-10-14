@@ -20,6 +20,7 @@ public class ItemRequestController {
 
     private final ItemRequestService itemRequestService;
     private final ItemRequestMapper mapper;
+
     @PostMapping
     public ItemRequestRetrieveDto createRequest(@RequestHeader("X-Sharer-User-Id") long userId,
                                                     @RequestBody ItemRequestCreateDto itemRequestDto) {

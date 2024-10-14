@@ -23,6 +23,7 @@ public class BookingController {
     private final BookingServiceImpl bookingService;
 
     private final BookingMapper mapper;
+
     public BookingController(BookingServiceImpl bookingService, BookingMapper mapper) {
         this.bookingService = bookingService;
         this.mapper = mapper;

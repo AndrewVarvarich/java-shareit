@@ -64,6 +64,7 @@ class BookingServiceImplTest {
         assertEquals(booking, actrualBooking);
 
     }
+
     @Test
     void getBookingById_whenBookingIsNotFound_thenThrowNotFoundException() {
         when(bookingRepository.findById(BOOKING_ID)).thenReturn(Optional.empty());
