@@ -20,6 +20,7 @@ import ru.practicum.shareit.item.dto.ItemUpdatedDto;
 public class ItemController {
 
     private final ItemClient itemClient;
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createItem(@Positive@RequestHeader("X-Sharer-User-Id") long userId,
                                              @Validated @RequestBody ItemCreateDto newItemDto) {
