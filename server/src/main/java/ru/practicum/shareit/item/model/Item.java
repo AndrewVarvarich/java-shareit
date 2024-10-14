@@ -14,10 +14,10 @@ import java.util.Set;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 @Entity
 @ToString
 @Table(name = "items")
+@EqualsAndHashCode(of = "id")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

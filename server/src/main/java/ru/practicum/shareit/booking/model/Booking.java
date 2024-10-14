@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import ru.practicum.shareit.booking.mapper.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
@@ -16,6 +17,7 @@ import jakarta.persistence.*;
 @Entity
 @ToString
 @Table(name = "bookings")
+@EqualsAndHashCode(of = "id")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

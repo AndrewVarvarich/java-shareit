@@ -6,16 +6,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repo.BookingRepository;
-import ru.practicum.shareit.item.mapper.CommentMapper;
-import ru.practicum.shareit.item.repo.CommentRepository;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repo.ItemRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.repo.ItemRequestRepository;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repo.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.exception.*;
 
@@ -115,11 +110,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
 
-    public boolean isItemAvailable(Long itemId, LocalDateTime start, LocalDateTime end) {
-        List<Booking> overlappingBookings = bookingRepository.findOverlappingBookings(itemId, start, end);
-        return overlappingBookings.isEmpty();
-    }
-
     @Override
     public Item getItemToBook(final long id, final long userId) {
         return itemRepository.findById(id)
@@ -130,6 +120,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public boolean existByOwnerId(long userId) {
         return itemRepository.existsByOwnerId(userId);
+    }
+
+    public boolean isItemAvailable(Long itemId, LocalDateTime start, LocalDateTime end) {
+        List<Booking> overlappingBookings = bookingRepository.findOverlappingBookings(itemId, start, end);
+        return overlappingBookings.isEmpty();
     }
 
     private Item hiddenUserData(final Item item, final long userId) {

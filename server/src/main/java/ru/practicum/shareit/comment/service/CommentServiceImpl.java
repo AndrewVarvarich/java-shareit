@@ -13,10 +13,10 @@ import ru.practicum.shareit.exception.ValidationException;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = false)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
-class CommentServiceImpl implements CommentService {
+public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository repository;
     private final BookingService bookingService;

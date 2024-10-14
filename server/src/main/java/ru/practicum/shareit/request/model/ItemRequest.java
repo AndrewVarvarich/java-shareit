@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "requests")
+@EqualsAndHashCode(of = "id")
 public class ItemRequest {
 
     @Id
@@ -37,5 +39,5 @@ public class ItemRequest {
 
     @OneToMany(mappedBy = "request", fetch = FetchType.EAGER)
     @ToString.Exclude
-    private Set<Item> items = new HashSet<>();;
+    private Set<Item> items = new HashSet<>();
 }
