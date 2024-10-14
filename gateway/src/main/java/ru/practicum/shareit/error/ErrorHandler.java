@@ -62,23 +62,4 @@ public class ErrorHandler {
                 "error", Map.of("message", e.getMessage())
         );
     }
-    /*@ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidationException(final Exception e) {
-        log.error("Ошибка валидации данных: {}.", e.getMessage());
-        return Map.of(
-                "error", "Ошибка валидации данных",
-                "description", e.getMessage()
-        );
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleThrowable(final Throwable e) {
-        log.error("Возникла ошибка: {}.", e.getMessage());
-        return Map.of(
-                "error", "Возникла ошибка.",
-                "description", e.getMessage()
-        );
-    }*/
 }
