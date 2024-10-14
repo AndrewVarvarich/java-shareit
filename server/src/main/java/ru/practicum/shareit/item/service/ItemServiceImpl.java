@@ -8,7 +8,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repo.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repo.ItemRepository;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -33,8 +32,9 @@ public class ItemServiceImpl implements ItemService {
         Objects.requireNonNull(item, "Cannot create item: is null");
         final User user = userService.getUser(userId);
         if (item.getRequest() != null) {
-            ItemRequest itemRequest = itemRequestService.getItemRequest(item.getRequest().getId());
-            item.setRequest(itemRequest);
+            itemRequestService.getItemRequest(item.getRequest().getId());
+//            ItemRequest itemRequest = itemRequestService.getItemRequest(item.getRequest().getId());
+            /*item.setRequest(itemRequest);*/
         }
         item.setOwner(user);
         final Item createdItem = itemRepository.save(item);

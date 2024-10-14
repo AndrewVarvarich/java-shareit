@@ -8,8 +8,6 @@ import ru.practicum.shareit.booking.model.Booking;
 
 import java.util.List;
 
-
-
 @Mapper(componentModel = "spring")
 public interface BookingMapper {
 
