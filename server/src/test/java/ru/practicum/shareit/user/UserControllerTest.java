@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -127,8 +126,7 @@ class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void deleteUser_whenUserExists_shouldReturnOk() {
+    void deleteUser_whenUserExists_shouldReturnOk() throws Exception {
         doNothing().when(userService).deleteUser(anyLong());
 
         mockMvc.perform(delete("/users/1"))
