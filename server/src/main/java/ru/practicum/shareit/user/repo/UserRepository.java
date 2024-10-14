@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.Optional;
-
 public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("delete from User u where u.id = :id")

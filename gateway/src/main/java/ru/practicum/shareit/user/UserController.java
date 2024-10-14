@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
 
-import java.util.Collection;
-
 @Controller
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
