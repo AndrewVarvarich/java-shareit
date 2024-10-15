@@ -22,7 +22,7 @@ public class ItemController {
     private final ItemClient itemClient;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> createItem(@Positive@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> createItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                              @Valid @RequestBody ItemCreateDto newItemDto) {
         log.info("Received POST at /items X-Sharer-User-Id={} {}", userId, newItemDto);
         return itemClient.createItem(userId, newItemDto);

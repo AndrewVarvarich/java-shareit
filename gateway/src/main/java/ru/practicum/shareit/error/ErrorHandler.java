@@ -16,13 +16,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ErrorHandler {
 
-
-    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Object> handleValidationException(final Exception e) {
-        log.error("Ошибка валидации данных: {}.", e.getMessage());
+    public Map<String, Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        log.error("Ошибка валидации данных: {}.", ex.getMessage());
 
-        // Создаем ответ в нужной структуре
         Map<String, Object> response = new HashMap<>();
         response.put("type", "about:blank");
         response.put("title", "Bad Request");
@@ -30,19 +28,29 @@ public class ErrorHandler {
         response.put("detail", "Check that data you sent is correct");
         response.put("instance", "/items");
 
-        // Если это MethodArgumentNotValidException, то собираем ошибки полей
-        if (e instanceof MethodArgumentNotValidException) {
-            MethodArgumentNotValidException validationException = (MethodArgumentNotValidException) e;
-            Map<String, String> fieldErrors = validationException.getBindingResult().getFieldErrors().stream()
-                    .collect(Collectors.toMap(
-                            fieldError -> fieldError.getField(),
-                            fieldError -> fieldError.getDefaultMessage()
-                    ));
-            response.put("error", fieldErrors);
-        } else {
-            // Для других исключений (например, ValidationException) добавляем общее сообщение
-            response.put("error", Map.of("available", "не должно равняться null")); // Или другая логика
-        }
+        Map<String, String> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
+                .collect(Collectors.toMap(
+                        fieldError -> fieldError.getField(),
+                        fieldError -> fieldError.getDefaultMessage()
+                ));
+        response.put("error", fieldErrors);
+
+        return response;
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleValidationException(ValidationException ex) {
+        log.error("Ошибка валидации данных: {}.", ex.getMessage());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("type", "about:blank");
+        response.put("title", "Bad Request");
+        response.put("status", 400);
+        response.put("detail", "Check that data you sent is correct");
+        response.put("instance", "/items");
+
+        response.put("error", Map.of("available", "не должно равняться null")); // Можно адаптировать под реальный кейс
 
         return response;
     }
